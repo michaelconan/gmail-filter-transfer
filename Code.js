@@ -13,14 +13,15 @@ function exportFilters() {
   filters = {
     filters: filters.map(f => {
       let newFilter = {
-        criteria: f.criteria
+        criteria: f.criteria,
+        action: {}
       };
       // Map Label IDs to names to recreate for new user
       Object.entries(f.action).forEach(([k,v]) => {
         if (k.endsWith('Ids')) {
-          newFilter[k] = v.map(l => labelMap[l])
+          newFilter.action[k] = v.map(l => labelMap[l])
         } else {
-          newFilter[k] = v;
+          newFilter.action[k] = v;
         }
       });
       return newFilter;
