@@ -46,7 +46,7 @@ function importFilters() {
 
   // Get current filters
   let labels = Gmail.Users.Labels.list('me').labels;
-  let labelNames = labels.map(l => l.name);
+  let labelMap = Object.fromEntries(labels.map(l => [l.name, l.id]));
 
   // Get unique list of labels from filter imports
   let newLabels = filterData.map(f => {
@@ -57,12 +57,12 @@ function importFilters() {
     if (f.action.removeLabelIds) {
       labels.push(...f.action.removeLabelIds);
     }
-  }).filter((e,i,arr) => arr.indexOf(e) === i);
+    return labels;
+  }).flat().filter((e,i,arr) => arr.indexOf(e) === i);
 
   // Create any missing labels
-  let labelMap = {};
   for (let label of newLabels) {
-    if (!labelNames.includes(label)) {
+    if (!Object.keys(labelMap).includes(label)) {
       let newLabel = Gmail.Users.Labels.create({
         name: label
       }, 'me');
